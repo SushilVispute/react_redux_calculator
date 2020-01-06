@@ -11,7 +11,7 @@ class Display extends Component {
   }
 }
 Display.propTypes = {
-  result: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired
+  result: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 };
 const mapStateToProps = state => {
   //   console.log("mapStateToProps", state.CalculationReducer);

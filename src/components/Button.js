@@ -1,90 +1,57 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { numberPressed, clearPressed } from "../actions/actions";
+import {
+  numberPressed,
+  clearPressed,
+  operationPressed,
+  dotPressed
+} from "../actions/actions";
 import PropTypes from "prop-types";
-
-const keyPad = [
-  "AC",
-  "/",
-  "*",
-  "-",
-  7,
-  8,
-  9,
-  "+",
-  4,
-  5,
-  6,
-  "=",
-  1,
-  2,
-  3,
-  ".",
-  0
-];
+import { keyPad } from "../constant";
 
 class Button extends Component {
   render() {
-    const { result, calculation, getNumber, getEqual, getClear } = this.props;
+    const { getNumber, getOperation, getDot, getClear } = this.props;
     const keyPadList = keyPad.map(btn => {
-      if (btn === "=") {
+      if (btn === ".") {
         return (
-          <button key={btn} className="keyPad" onClick={() => getEqual()}>
+          <button key={btn} onClick={() => getDot(btn)}>
             {btn}
           </button>
         );
       } else if (btn === "AC") {
         return (
-          <button key={btn} className="keyPad" onClick={() => getClear()}>
+          <button key={btn} className="ac" onClick={() => getClear()}>
             {btn}
           </button>
         );
       } else {
-        // return isNaN(btn) && btn !== "." ? (
-        //   <button
-        //     key={btn}
-        //     className="keyPad"
-        //     onClick={() => getOperation(btn)}
-        //   >
-        //     {btn}
-        //   </button>
-        // ) : (
-        return (
-          <button
-            key={btn}
-            className="keyPad"
-            onClick={() => getNumber(btn, calculation, result)}
-          >
+        return isNaN(btn) && btn !== "." ? (
+          <button key={btn} onClick={() => getOperation(btn)}>
+            {btn}
+          </button>
+        ) : (
+          <button key={btn} onClick={() => getNumber(btn)}>
             {btn}
           </button>
         );
-        // );
       }
     });
     return <div className="keyPad">{keyPadList}</div>;
   }
 }
 Button.propTypes = {
-  result: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-  calculation: PropTypes.array,
   getNumber: PropTypes.func,
-  getEqual: PropTypes.func,
+  getOperation: PropTypes.func,
+  getDot: PropTypes.func,
   getClear: PropTypes.func
-};
-const mapStateToProps = state => {
-  //   console.log("mapStateToProps", state.CalculationReducer);
-  return {
-    calculation: state.CalculationReducer.calculation,
-    result: state.CalculationReducer.result
-  };
 };
 const mapDispatchToProps = dispatch => {
   return {
-    getNumber: (inputValue, currentState, currentResult) => {
-      dispatch(numberPressed(inputValue, currentState, currentResult));
-    },
-    getEqual: eq => {},
+    getNumber: num => dispatch(numberPressed(num.toString())),
+    getOperation: op => dispatch(operationPressed(op)),
+    getDot: dot => dispatch(dotPressed(dot)),
     getClear: cl => dispatch(clearPressed())
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Button);
+export default connect(null, mapDispatchToProps)(Button);

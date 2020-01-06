@@ -1,31 +1,52 @@
-import { NUMBER_PRESSED, CLEAR_PRESSED } from "../actions/actions";
+import {
+  NUMBER_PRESSED,
+  CLEAR_PRESSED,
+  OPERACTION_PRESSED,
+  DOT_PREESED
+} from "../actions/actions";
+import { handleOperand, handleNumber, handdleDot } from "../calculation";
+import { resetState } from "../constant";
 
 const initialState = {
-  calculation: [],
-  result: 0
+  result: "0",
+  firstOperand: null,
+  waitting: false,
+  operator: null
 };
 
 export const CalculationReducer = (state = initialState, action) => {
   switch (action.type) {
     case NUMBER_PRESSED:
-      console.log("NUMBER_PRESSED", action.payload.calculation);
+      let { resultNum } = handleNumber(state, action.payload);
+      // console.log("NUMBER_PRESSED", state, action.payload);
       return {
-        calculation: action.payload.calculation,
-        result: action.payload.result
+        ...state,
+        result: resultNum,
+        waitting: false
       };
 
-    // case EQUAL_PREESED:
-    //   console.log("EQUAL_PREESED", action.payload).toString());
-    //   return math.evaluate(action.payload).toString();
-    // return {
-    //   ...state,
-    //   value: math.evaluate(action.payload)
-    // };
+    case OPERACTION_PRESSED:
+      // console.log("OPERACTION_PRESSED", state, action.payload);
+      return {
+        ...state,
+        waitting: true,
+        operator: action.payload,
+        firstOperand: handleOperand(state),
+        result: String(handleOperand(state))
+      };
+
+    case DOT_PREESED:
+      // console.log("DOT_PREESED", action.payload);
+      let { resultDot } = handdleDot(state, action.payload);
+      return {
+        ...state,
+        // waitting: true,
+        result: resultDot
+      };
 
     case CLEAR_PRESSED:
       return {
-        calculation: [],
-        result: 0
+        ...resetState
       };
 
     default:
